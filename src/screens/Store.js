@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 export default function Store() {
   return (
     <View>
-      <Text>Store screen</Text>
+      <Text>hellô</Text>
     </View>
   )
 }
