@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'white',
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderColor: 'lightgray',
@@ -221,12 +221,12 @@ const styles = StyleSheet.create({
     width: 200,
     color: 'black',
     fontSize: 10,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#E8E8E8',
     marginHorizontal: 5,
   },
   TouchOpSearch: {
     borderRadius: 5,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#E8E8E8',
     marginHorizontal: 5,
     paddingHorizontal: 8,
     justifyContent: 'center',
