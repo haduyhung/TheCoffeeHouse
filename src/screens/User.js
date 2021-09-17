@@ -22,6 +22,8 @@ import Swiper from 'react-native-swiper';
 
 
 export default function User() {
+  const onLogout = () => {
+  }
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -87,7 +89,9 @@ export default function User() {
               <Text style={styles.txtFunctionsSettings}>Cài đặt</Text>
               <FontAwesome style={styles.angle} name="angle-right" size={20} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.touchOpSettings}>
+            <TouchableOpacity style={styles.touchOpSettings}
+              onPress={onLogout}
+            >
               <SimpleLineIcons name="logout" size={20} color="#696969" />
               <Text style={styles.txtFunctionsSettings}>Đăng xuất</Text>
               <FontAwesome style={styles.angle} name="angle-right" size={20} color="black" />

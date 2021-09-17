@@ -1,8 +1,19 @@
 import axios from "axios";
 import { baseURL } from "./config";
 
+// const instance = axios.create({
+//   baseURL: baseURL, //'https://forever21.hungvu.net/'
+//   timeout: 60000,
+//   headers: {
+//     Accept: 'application/json',
+//     'Content-Type': 'application/json'
+//   }
+// });
+
+// export const getProductList = () => instance.get('get-products')
+
 const instance = axios.create({
-  baseURL: baseURL, //'https://forever21.hungvu.net/'
+  baseURL: baseURL,
   timeout: 60000,
   headers: {
     Accept: 'application/json',
@@ -10,4 +21,7 @@ const instance = axios.create({
   }
 });
 
-export const getProductList = () => instance.get('get-products')
+export const getProductList = () => instance.get('v2/menu') //https://api.thecoffeehouse.com/api/v2/menu
+
+export const login = (params) => instance.post('verify_mobile', params) //https://api.thecoffeehouse.com/api/verify_mobile
+
