@@ -77,7 +77,7 @@ export default function Home() {
       <View style={styles.up}>
         <View style={styles.greeting}>
           <MaterialCommunityIcons name="weather-partly-cloudy" size={30} color="orange" />
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Xin chào Hưng Max DZ!</Text>
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Xin chào Hưng Max DZ...!</Text>
         </View>
         <View style={styles.voucherContainer}>
           <TouchableOpacity style={styles.touchOpVoucher}>
