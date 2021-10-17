@@ -13,16 +13,32 @@ import OrderScreen from '../screens/Order';
 import StoreScreen from '../screens/Store';
 import ScoreScreen from '../screens/Score';
 import UserScreen from '../screens/User';
+import LoginScreen from '../screens/Login';
+import ProductDetail from '../screens/ProductDetail';
+import TicketScreen from '../screens/Ticket';
 
-const Stack = createNativeStackNavigator();
+const ContainerStack = createNativeStackNavigator();
+const StoreStack = createNativeStackNavigator();
+const UserStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+function StoreStackScreen() {
+  return (
+    <StoreStack.Navigator screenOptions={{ headerShown: false }}>
+      <StoreStack.Screen name="Store" component={StoreScreen} />
+      <StoreStack.Screen name="Ticket" component={TicketScreen} />
+      <StoreStack.Screen name="ProductDetail" component={ProductDetail} />
+    </StoreStack.Navigator>
+  );
+}
+
 
 export default function App() {
 
-  return (
-    <NavigationContainer>
+  const TabApp = () => {
+    return (
       <Tab.Navigator
-        initialRouteName={"Store"}
+        initialRouteName={"Home"}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -49,7 +65,6 @@ export default function App() {
                 : 'ios-menu-outline';
             }
 
-            // You can return any component that you like here!
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: 'tomato',
@@ -58,10 +73,19 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Trang chủ" }} />
         <Tab.Screen name="Order" component={OrderScreen} options={{ title: "Đặt hàng" }} />
-        <Tab.Screen name="Store" component={StoreScreen} options={{ tabBarBadge: 3, title: "Cửa hàng" }} />
-        <Tab.Screen name="Score" component={ScoreScreen} options={{ title: "Tích điểm" }} />
+        <Tab.Screen name="Store" component={StoreStackScreen} options={{ tabBarBadge: 3, title: "Cửa hàng" }} />
+        <Tab.Screen name="Score" component={ScoreScreen} options={{ title: "Giỏ hàng" }} />
         <Tab.Screen name="User" component={UserScreen} options={{ title: "Khác" }} />
       </Tab.Navigator>
+    )
+  }
+
+  return (
+    <NavigationContainer>
+      <ContainerStack.Navigator screenOptions={{ headerShown: false }}>
+        {/* <ContainerStack.Screen name="Login" component={LoginScreen} /> */}
+        <ContainerStack.Screen name="TapApp" component={TabApp} />
+      </ContainerStack.Navigator>
     </NavigationContainer>
   )
 }

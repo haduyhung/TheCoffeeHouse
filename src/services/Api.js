@@ -23,5 +23,8 @@ const instance = axios.create({
 
 export const getProductList = () => instance.get('v2/menu') //https://api.thecoffeehouse.com/api/v2/menu
 
-export const login = (params) => instance.post('verify_mobile', params) //https://api.thecoffeehouse.com/api/verify_mobile
+export const cfLogin = (params) => instance.post('verify_mobile', params) //https://api.thecoffeehouse.com/api/verify_mobile
 
+export const getDiscoverProducts = (params) => instance.post('v5/menu', params)
+
+//https://api.thecoffeehouse.com/api/v5/menu

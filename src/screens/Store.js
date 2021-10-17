@@ -22,12 +22,15 @@ import { getProductList } from '../services/Api';
 import axios from 'axios'
 import { useDispatch, useSelector } from "react-redux";
 
-export default function Store() {
+export default function Store({ rout, navigation }) {
 
   const [product, setProduct] = useState([])
   const dispatch = useDispatch();
   const onAddToCart = (item) => () => {
     dispatch({ type: 'ADD_CART', data: { ...item, quantity: 1 } })
+  }
+  const onMoveToDetail = (data) => () => {
+    navigation.navigate('ProductDetail', { detail: data });
   }
 
   useEffect(() => {
@@ -50,7 +53,7 @@ export default function Store() {
     //console.log('item', item)
     return (
       <TouchableOpacity
-        onPress={onAddToCart(item)}
+        onPress={onMoveToDetail(item)}
         style={styles.item}>
         <View>
           <Image style={{ height: 300, width: 300, width: 100, height: 100, borderRadius: 5 }}
@@ -61,6 +64,9 @@ export default function Store() {
           <Text style={styles.title}>{item.product_name}</Text>
           <Text style={styles.cost}>{item.price}</Text>
         </View>
+        <TouchableOpacity onPress={onAddToCart(item)}>
+          <Text>Thêm vào giỏ</Text>
+        </TouchableOpacity>
       </TouchableOpacity>
     )
   };

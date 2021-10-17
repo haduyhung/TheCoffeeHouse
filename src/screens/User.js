@@ -16,14 +16,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Swiper from 'react-native-swiper';
 
 
-export default function User() {
-  const onLogout = () => {
-  }
+export default function User({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -90,7 +86,7 @@ export default function User() {
               <FontAwesome style={styles.angle} name="angle-right" size={20} color="black" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.touchOpSettings}
-              onPress={onLogout}
+              onPress={() => navigation.navigate('Login')}
             >
               <SimpleLineIcons name="logout" size={20} color="#696969" />
               <Text style={styles.txtFunctionsSettings}>Đăng xuất</Text>

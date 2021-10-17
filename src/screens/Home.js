@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   View,
   Text,
@@ -17,60 +17,51 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Swiper from 'react-native-swiper';
+import { getDiscoverProducts } from '../services/Api';
+import { getProductList } from '../services/Api';
+import { useDispatch, useSelector } from "react-redux";
 
-const DATA = [
-  {
-    id: '1',
-    title: 'Coffee 1',
-    cost: '10.00$',
-    linkImage: require('./images/ex1.jpg'),
-  },
-  {
-    id: '2',
-    title: 'Coffee 2',
-    cost: '16.00$',
-    linkImage: require('./images/ex2.jpg'),
-  },
-  {
-    id: '3',
-    title: 'Coffee 3',
-    cost: '12.00$',
-    linkImage: require('./images/ex3.jpg'),
-  },
-  {
-    id: '4',
-    title: 'Coffee 4',
-    cost: '12.00$',
-    linkImage: require('./images/ex4.jpg'),
-  },
-  {
-    id: '5',
-    title: 'Coffee 5',
-    cost: '12.00$',
-    linkImage: require('./images/ex3.jpg'),
-  },
-  {
-    id: '6',
-    title: 'Coffee 6',
-    cost: '12.00$',
-    linkImage: require('./images/ex1.jpg'),
-  },
-];
-
-
-export default function Home() {
+export default function Home({ rout, navigation }) {
+  const [product, setProduct] = useState([])
+  const dispatch = useDispatch();
+  const onAddToCart = (item) => () => {
+    dispatch({ type: 'ADD_CART', data: { ...item, quantity: 1 } })
+  }
+  const onMoveToDetail = (data) => () => {
+    navigation.navigate('ProductDetail', { detail: data });
+  }
+  useEffect(() => {
+    const callGetProductList = async () => {
+      try {
+        console.log('before calling');
+        const response = await getProductList();
+        console.log('rs', response.data.data);
+        setProduct(response.data.data);
+      }
+      catch (error) {
+        console.error(error);
+      }
+      getProductList();
+    }
+    callGetProductList();
+  }, [])
   const renderItem = ({ item }) => (
-    <View style={styles.item}>
+    <TouchableOpacity
+      onPress={onMoveToDetail(item)}
+      style={styles.item}>
       <View>
-        <Image style={{ height: 300, width: 300, }}
-          source={item.linkImage}
+        <Image style={{ height: 300, width: 300, width: 100, height: 100, borderRadius: 5 }}
+          source={{ uri: item.image }}
         />
       </View>
-      <View style={{ marginTop: 5 }}>
-        <Text style={styles.title}>{item.title}</Text>
+      <View style={styles.introProducts}>
+        <Text style={styles.title}>{item.product_name}</Text>
+        <Text style={styles.price}>{item.price}</Text>
       </View>
-
-    </View >
+      <TouchableOpacity onPress={onAddToCart(item)}>
+        <Text>Thêm vào giỏ</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
   );
   return (
     <View style={styles.container}>
@@ -175,7 +166,7 @@ export default function Home() {
               </View>
               <View style={styles.listExplorer}>
                 <FlatList
-                  data={DATA}
+                  data={product}
                   renderItem={renderItem}
                   keyExtractor={item => item.id}
                 />
@@ -339,18 +330,36 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   listExplorer: {
-
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
   },
   item: {
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FEEBD0',
-    marginTop: 20,
-    paddingTop: 10,
+    backgroundColor: 'orange',
+    marginBottom: 10,
+    padding: 15,
+    flexDirection: 'row',
+    borderRadius: 5,
+    flex: 3,
+  },
+  typesCoffee: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 20,
   },
   title: {
     fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
   },
+  introProducts: {
+    flex: 1,
+    marginLeft: 15,
+  },
+  price: {
+    color: 'red',
+    fontSize: 16,
+    fontWeight: 'bold'
+  }
 })

@@ -1,5 +1,4 @@
-
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   View,
   Text,
@@ -19,61 +18,54 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Swiper from 'react-native-swiper';
+import { getProductList } from '../services/Api';
+import axios from 'axios'
+import { useDispatch, useSelector } from "react-redux";
 
-const DATA = [
-  {
-    id: '1',
-    title: 'Coffee 1',
-    cost: '10.00$',
-    linkImage: require('./images/ex1.jpg'),
-  },
-  {
-    id: '2',
-    title: 'Coffee 2',
-    cost: '16.00$',
-    linkImage: require('./images/ex2.jpg'),
-  },
-  {
-    id: '3',
-    title: 'Coffee 3',
-    cost: '12.00$',
-    linkImage: require('./images/ex3.jpg'),
-  },
-  {
-    id: '4',
-    title: 'Coffee 4',
-    cost: '12.00$',
-    linkImage: require('./images/ex4.jpg'),
-  },
-  {
-    id: '5',
-    title: 'Coffee 5',
-    cost: '12.00$',
-    linkImage: require('./images/ex3.jpg'),
-  },
-  {
-    id: '6',
-    title: 'Coffee 6',
-    cost: '12.00$',
-    linkImage: require('./images/ex1.jpg'),
-  },
-];
+export default function Order({ rout, navigation }) {
 
+  const [product, setProduct] = useState([])
+  const dispatch = useDispatch();
+  const onAddToCart = (item) => () => {
+    dispatch({ type: 'ADD_CART', data: { ...item, quantity: 1 } })
+  }
+  const onMoveToDetail = (data) => () => {
+    navigation.navigate('ProductDetail', { detail: data });
+  }
 
-export default function Order() {
+  useEffect(() => {
+    const callGetProductList = async () => {
+      try {
+        console.log("before calling");
+        const response = await getProductList();
+        console.log('rs', response.data.data);
+        setProduct(response.data.data)
+        console.log("after calling");
+      } catch (error) {
+        console.error(error);
+      }
+      getProductList()
+    }
+    callGetProductList()
+  }, [])
 
   const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <View style={styles.introProducts}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.cost}>{item.cost}</Text>
-      </View>
+    <TouchableOpacity
+      onPress={onMoveToDetail(item)}
+      style={styles.item}>
       <View>
         <Image style={{ height: 300, width: 300, width: 100, height: 100, borderRadius: 5 }}
-          source={item.linkImage}
+          source={{ uri: item.image }}
         />
       </View>
-    </View >
+      <View style={styles.introProducts}>
+        <Text style={styles.title}>{item.product_name}</Text>
+        <Text style={styles.cost}>{item.price}</Text>
+      </View>
+      <TouchableOpacity onPress={onAddToCart(item)}>
+        <Text>Thêm vào giỏ</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
   );
 
 
@@ -109,79 +101,14 @@ export default function Order() {
       </View>
       <ScrollView style={styles.listExplorerContainer}>
         <View style={styles.listExplorer}>
-          <View>
-            <Text style={styles.typesCoffee}>
-              Cà phê - Cà phê gói uống liền
-            </Text>
-          </View>
           <FlatList
-            data={DATA}
+            data={product}
             renderItem={renderItem}
             keyExtractor={item => item.id}
           />
         </View>
-        <View style={styles.listExplorer}>
-          <View>
-            <Text style={styles.typesCoffee}>
-              Cà phê
-            </Text>
-          </View>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
-        </View>
-        <View style={styles.listExplorer}>
-          <View>
-            <Text style={styles.typesCoffee}>
-              Trà trái cây - Trà sữa
-            </Text>
-          </View>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
-        </View>
-        <View style={styles.listExplorer}>
-          <View>
-            <Text style={styles.typesCoffee}>
-              Đá xay - Chocolate - Matcha
-            </Text>
-          </View>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
-        </View>
-        <View style={styles.listExplorer}>
-          <View>
-            <Text style={styles.typesCoffee}>
-              Bánh mặn - Bánh mặn - Snack
-            </Text>
-          </View>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
-        </View>
-        <View style={styles.listExplorer}>
-          <View>
-            <Text style={styles.typesCoffee}>
-              Bộ sưu tập quà tặng
-            </Text>
-          </View>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
-        </View>
-      </ScrollView>
-    </View>
+      </ScrollView >
+    </View >
   )
 }
 const styles = StyleSheet.create({
@@ -259,5 +186,6 @@ const styles = StyleSheet.create({
   },
   introProducts: {
     flex: 1,
+    marginLeft: 15,
   },
 })

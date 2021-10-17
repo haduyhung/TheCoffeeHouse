@@ -1,170 +1,216 @@
-import React, { useEffect, useState } from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Touchable,
-  ScrollView,
-  SafeAreaView,
-  ImageBackground,
-  Image,
-  FlatList,
-  TextInput,
-} from 'react-native'
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Swiper from 'react-native-swiper';
-import { getProductList } from '../services/Api';
-import axios from 'axios'
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, Image, SafeAreaView, TextInput } from 'react-native'
+import RnIcon from "react-native-vector-icons/Ionicons";
+import Swiper from 'react-native-swiper'
+import Modal from 'react-native-modal';
+import { cfLogin } from '../services/Api'
 
-export default function Login() {
+export default function Login({ navigation }) {
+  const [phone, setPhone] = useState()
+  const [code, setCode] = useState()
+  const [isVisible, setIsVisible] = useState(false)
+  const onChangePhone = (val) => setPhone(val)
+  const onChangeCode = (val) => setCode(val)
 
-  const [product, setProduct] = useState([])
+  const onCloseModal = () => {
+    setIsVisible(false)
+  }
 
-  useEffect(() => {
-    const callGetProductList = async () => {
-      try {
-        console.log("before calling");
-        const response = await getProductList();
-        console.log('rs', response.data.data);
-        setProduct(response.data.data)
-        console.log("after calling");
-      } catch (error) {
-        console.error(error);
-      }
-      getProductList()
+  const onVerifyPhone = async () => {
+    try {
+      const response = await cfLogin({ phone: phone });
+      console.log('rs', response.data.data);
+      setIsVisible(true)
+
+    } catch (error) {
+      console.error(error.response);
     }
-    callGetProductList()
-  }, [])
-
-  const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <View>
-        <Image style={{ height: 300, width: 300, width: 100, height: 100, borderRadius: 5 }}
-          source={{ uri: item.image }}
-        />
-      </View>
-      <View style={styles.introProducts}>
-        <Text style={styles.title}>{item.product_name}</Text>
-        <Text style={styles.cost}>{item.price}</Text>
-      </View>
-    </View >
-  );
+  }
+  const onVerifyCode = async () => {
+    try {
+      const response = await cfLogin({ phone: phone, otp: code });
+      console.log('rs', response.data);
+      setIsVisible(false);
+      navigation.navigate('TapApp');
+    } catch (error) {
+      console.error(error.response);
+    }
+  }
 
 
   return (
-    <View style={styles.container}>
-      <View style={styles.filterContainer}>
-        <TextInput
-          style={styles.txtIpSearch}
-          placeholder="hello"
+    <SafeAreaView>
+      <View>
+        <Image
+          style={{ height: 230, width: '100%' }}
+          source={{ uri: 'https://www.cukcuk.vn/wp-content/uploads/2019/09/foody-mobile-960x600-the-coffee-h-761-636304658264606242-1568800909178126962452-crop-1568800918203296009047.jpg' }}
         />
-        <TouchableOpacity style={styles.TouchOpSearch}>
-          <Ionicons name="map-outline" size={20} color="black" />
-          <Text style={{ fontWeight: 'bold', paddingLeft: 10 }}>
-            Bản đồ
-          </Text>
-        </TouchableOpacity>
       </View>
-      <ScrollView style={styles.listExplorerContainer}>
-        <View style={styles.listExplorer}>
-          <View>
-            <Text style={styles.typesCoffee}>
-              Các cửa hàng khác
+      <View style={{ flex: 1 }}>
+        <View style={{
+          height: 800,
+          marginTop: -30,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          backgroundColor: 'white'
+        }}>
+          <View style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 20
+          }}>
+            <Text style={{
+              fontSize: 20,
+              fontFamily: 'Times New Roman',
+              marginTop: 20
+            }}>
+              Wellcome to
             </Text>
+            <Text style={{
+              fontSize: 30,
+              fontFamily: 'Showcard Gothic',
+              fontWeight: 'bold',
+              marginBottom: 50
+            }}>
+              The Coffee House
+            </Text>
+            <TextInput
+              textAlign={'center'}
+              maxLength={11}
+              clearTextOnFocus={true}
+              placeholder="Phone Number"
+              secureTextEntry={false}
+              value={phone}
+              onChangeText={onChangePhone}
+              style={{
+                height: 60,
+                width: '90%',
+                fontSize: 24,
+                borderColor: 'gray',
+                borderWidth: 1,
+                marginLeft: 5,
+                fontFamily: 'Times New Roman',
+                borderRadius: 10,
+                marginBottom: 10,
+                marginTop: 40
+              }}
+            />
+            <TouchableOpacity
+              onPress={onVerifyPhone}
+              style={{
+                height: 60,
+                width: '90%',
+                borderColor: 'gray',
+                borderWidth: 1,
+                marginLeft: 5,
+                borderRadius: 10,
+                marginBottom: 10,
+                marginTop: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: "gray"
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: 'white'
+                }}>
+                Đăng Nhập
+              </Text>
+            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', marginTop: 30 }}>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '34%',
+                  height: 2,
+                  marginRight: 10,
+                  marginTop: 12,
+                  borderColor: "#d8d5d5"
+                }}>
+
+              </View>
+              <Text style={{ fontSize: 24 }}>Hoặc</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '34%', height: 2,
+                  marginLeft: 10, marginTop: 12,
+                  borderColor: "#d8d5d5"
+                }}>
+
+              </View>
+            </View>
+            <TouchableOpacity style={{
+              height: 60,
+              width: '90%',
+              borderColor: 'blue',
+              borderWidth: 1, marginLeft: 5,
+              borderRadius: 10,
+              marginBottom: 20,
+              marginTop: 40, justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: "blue"
+            }}>
+              <Text style={{ fontSize: 24, color: 'white' }}>Tiếp tục bằng Facebook</Text>
+            </TouchableOpacity>
           </View>
-          <FlatList
-            data={product}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
         </View>
-      </ScrollView>
-    </View>
+      </View>
+      <Modal
+        testID={'modal'}
+        isVisible={isVisible}
+        onSwipeComplete={onCloseModal}
+        swipeDirection={['up', 'left', 'right', 'down']}
+        style={{ justifyContent: 'flex-end', margin: 0 }}
+      >
+        <View style={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', height: 700 }}>
+          <TouchableOpacity onPress={onCloseModal} style={{ position: 'absolute', top: 0, right: 0 }}>
+            <RnIcon name="close" size={50} color="black" />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 40 }}>nhập mã cho sdt:{phone}</Text>
+          <Text style={{ fontSize: 18, marginVertical: 0 }}>Một mã Xác thực gồm 6 chữ số đã được gửi đến số </Text>
+          <Text style={{ fontSize: 18, marginBottom: 20, marginVertical: 10 }}>điện thoại:{phone}</Text>
+          <TextInput
+            textAlign={'center'}
+            maxLength={6}
+            clearTextOnFocus={true}
+            keyboardType="numeric"
+            placeholder="Mã OTP"
+            secureTextEntry={false}
+            value={code}
+            onChangeText={onChangePhone}
+            style={{
+              height: 60,
+              width: '90%',
+              fontSize: 22,
+              borderColor: 'gray',
+              borderWidth: 1,
+              marginLeft: 5,
+              fontFamily: 'Times New Roman',
+              borderRadius: 10, marginBottom: 20,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          />
+          <TouchableOpacity onPress={onVerifyCode}
+            style={{
+              height: 60,
+              width: '90%',
+              borderColor: 'gray',
+              borderWidth: 1,
+              marginLeft: 5,
+              borderRadius: 10,
+              marginBottom: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: "gray"
+            }}>
+            <Text style={{ fontSize: 22, color: 'white' }}>Xác Nhận</Text>
+          </TouchableOpacity>
+
+        </View>
+      </Modal>
+    </SafeAreaView>
   )
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    backgroundColor: '#F5F5F5',
-  },
-  location: {
-    paddingHorizontal: 10,
-    backgroundColor: 'white',
-  },
-  TouchOpLocation: {
-    flexDirection: 'row',
-  },
-  logoLocation: {
-    width: 50,
-    height: 50,
-  },
-  chooseLocation: {
-    flexDirection: 'column',
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderColor: 'lightgray',
-    paddingHorizontal: 10,
-    justifyContent: 'center',
-  },
-  txtIpSearch: {
-    borderRadius: 5,
-    height: 35,
-    width: 200,
-    color: 'black',
-    fontSize: 10,
-    backgroundColor: '#E8E8E8',
-    marginHorizontal: 5,
-  },
-  TouchOpSearch: {
-    borderRadius: 5,
-    backgroundColor: 'white',
-    marginHorizontal: 5,
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listExplorerContainer: {
-    backgroundColor: '#F5F5F5',
-    paddingHorizontal: 20,
-  },
-  listExplorer: {
-
-  },
-  item: {
-    alignItems: 'center',
-    backgroundColor: 'white',
-    marginBottom: 10,
-    padding: 15,
-    flexDirection: 'row',
-    borderRadius: 5,
-    flex: 3,
-  },
-  typesCoffee: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 20,
-  },
-  title: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  introProducts: {
-    flex: 1,
-    marginLeft: 15,
-  },
-})

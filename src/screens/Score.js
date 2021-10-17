@@ -25,14 +25,21 @@ export default function Score() {
   console.log('productsList', productsList);
   const dispatch = useDispatch();
 
-  const onChangeQuanlity = () => () => {
+  const totalMoney = productsList.reduce((acc, ele) => acc + Number(ele.price), 0)
 
+  const onChangeQuantity = (type, item) => () => {
+    if (type === 'reduce' && item.quantity == 1) {
+      dispatch({ type: 'REMOVE_ITEM', data: item })
+    }
+    else {
+      dispatch({ type: 'CHANGE_QUANTITY', data: item, changeQuantityType: type })
+    }
   }
   const onRemoveItems = (item) => () => {
     dispatch({ type: 'REMOVE_ITEM', data: item })
   }
-  const onRemoveAll = () => () => {
-
+  const onRemoveAll = () => {
+    dispatch({ type: 'REMOVE_ALL' })
   }
   const renderItem = ({ item }) => (
     <View style={styles.cartItem}>
@@ -42,14 +49,16 @@ export default function Score() {
         />
       </View>
       <View style={styles.introItem}>
-        <Text style={styles.title}>{item.product_name}</Text>
+        <View style={{ width: 200, alignItems: 'center' }}>
+          <Text style={styles.title}>{item.product_name}</Text>
+        </View>
         <Text style={styles.price}>$ {item.price}</Text>
         <View style={styles.productQuantity}>
-          <TouchableOpacity onPress={onChangeQuanlity}>
+          <TouchableOpacity onPress={onChangeQuantity('reduce', item)}>
             <AntDesign name="minuscircleo" size={25} color="gray" />
           </TouchableOpacity>
           <Text style={{ marginHorizontal: 5, fontSize: 18 }}>{item.quantity}</Text>
-          <TouchableOpacity onPress={onChangeQuanlity}>
+          <TouchableOpacity onPress={onChangeQuantity('increase', item)}>
             <AntDesign name="pluscircleo" size={25} color="gray" />
           </TouchableOpacity>
         </View>
@@ -67,21 +76,56 @@ export default function Score() {
           data={productsList}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-        />
-        {productsList?.length ?
-          <TouchableOpacity onPress={onRemoveAll}>
-            <Text>
-              remove all
-            </Text>
-          </TouchableOpacity> :
-          <View>
-            <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-              <Text>
-                Nothing here!
-              </Text>
+          ListFooterComponent={
+            productsList?.length &&
+            <View>
+              <TouchableOpacity onPress={onRemoveAll}
+                style={{ left: 330 }}
+              >
+                <Text>
+                  remove all
+                </Text>
+              </TouchableOpacity>
+              <View style={{
+                margin: 10,
+                backgroundColor: 'white',
+                padding: 10,
+                borderRadius: 5
+              }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+                  Total items: {productsList?.length}
+                </Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+                  Total money: ${totalMoney}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 1,
+                  borderColor: 'black',
+                  borderRadius: 5,
+                  height: 30,
+                  margin: 10,
+                  backgroundColor: 'orange',
+                }}
+              >
+                <Text style={{ fontSize: 18 }}>
+                  Thanh Toán
+                </Text>
+              </TouchableOpacity>
             </View>
+          }
+        />
+        {!productsList?.length &&
+          <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Text >
+              Nothing here!
+            </Text>
           </View>
         }
+
       </View>
     </View>
   )
